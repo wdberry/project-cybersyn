@@ -815,22 +815,23 @@ end
 local function grab_all_settings()
 	mod_settings.enable_planner = settings.global["cybersyn-enable-planner"].value --[[@as boolean]]
 	mod_settings.tps = settings.global["cybersyn-ticks-per-second"].value --[[@as double]]
+	mod_settings.update_tickets_gui = settings.global["cybersyn-update-ticks-for-gui"].value --[[@as uint]]
 	mod_settings.update_rate = settings.global["cybersyn-update-rate"].value --[[@as int]]
-	mod_settings.r_threshold = settings.global["cybersyn-request-threshold"].value--[[@as int]]
-	mod_settings.priority = settings.global["cybersyn-priority"].value--[[@as int]]
-	mod_settings.locked_slots = settings.global["cybersyn-locked-slots"].value--[[@as int]]
-	mod_settings.network_flag = settings.global["cybersyn-network-flag"].value--[[@as int]]
-	mod_settings.fuel_threshold = settings.global["cybersyn-fuel-threshold"].value--[[@as double]]
-	mod_settings.warmup_time = settings.global["cybersyn-warmup-time"].value--[[@as double]]
-	mod_settings.stuck_train_time = settings.global["cybersyn-stuck-train-time"].value--[[@as double]]
-	mod_settings.allow_cargo_in_depot = settings.global["cybersyn-allow-cargo-in-depot"].value--[[@as boolean]]
-	mod_settings.invert_sign = settings.global["cybersyn-invert-sign"].value--[[@as boolean]]
+	mod_settings.r_threshold = settings.global["cybersyn-request-threshold"].value --[[@as int]]
+	mod_settings.priority = settings.global["cybersyn-priority"].value --[[@as int]]
+	mod_settings.locked_slots = settings.global["cybersyn-locked-slots"].value --[[@as int]]
+	mod_settings.network_flag = settings.global["cybersyn-network-flag"].value --[[@as int]]
+	mod_settings.fuel_threshold = settings.global["cybersyn-fuel-threshold"].value --[[@as double]]
+	mod_settings.warmup_time = settings.global["cybersyn-warmup-time"].value --[[@as double]]
+	mod_settings.stuck_train_time = settings.global["cybersyn-stuck-train-time"].value --[[@as double]]
+	mod_settings.allow_cargo_in_depot = settings.global["cybersyn-allow-cargo-in-depot"].value --[[@as boolean]]
+	mod_settings.invert_sign = settings.global["cybersyn-invert-sign"].value --[[@as boolean]]
 end
 local function on_settings_changed(event)
 	grab_all_settings()
 	if event.setting == "cybersyn-ticks-per-second" then
 		if mod_settings.tps > DELTA then
-			local nth_tick = ceil(60/mod_settings.tps)--[[@as uint]];
+			local nth_tick = ceil(60 / mod_settings.tps) --[[@as uint]];
 			script.on_nth_tick(nth_tick, function()
 				tick(global, mod_settings)
 			end)
@@ -933,11 +934,11 @@ local function main()
 		script.on_event(defines.events.on_player_removed, manager.on_player_removed)
 		script.on_event(defines.events.on_player_created, manager.on_player_created)
 		script.on_event(defines.events.on_lua_shortcut, manager.on_lua_shortcut)
-		script.on_nth_tick(60, function() --TODO: tick value needs to be converted to mod setting
-			manager.tick(global)
-		end)
+		script.on_nth_tick(mod_settings.update_tickets_gui,
+			function()
+				manager.tick(global)
+			end)
 	end
-
 end
 
 
